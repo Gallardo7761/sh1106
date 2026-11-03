@@ -194,18 +194,18 @@ void SH1106_Draw_Pixel(SH1106_Handle_t *h, uint8_t x, uint8_t y, SH1106_Pixel_St
         h->buffer[x + (y / 8) * SH1106_WIDTH] &= ~(1 << (y % 8));
 }
 
-// column major, MSB
+// row major, MSB
 void SH1106_Draw_Bitmap(SH1106_Handle_t *h, uint8_t x, uint8_t y, const uint8_t *bitmap, uint8_t width, uint8_t height, SH1106_Pixel_State_t state)
 {
     if (h == NULL || bitmap == NULL) return;
     uint8_t bytes_per_row = (width + 7) / 8;
 
-    for (uint8_t col = 0; col < width; col++) {
-        for (uint8_t row = 0; row < height; row++) {
-            uint8_t index = (col * bytes_per_row) + (row / 8);
-            uint8_t is_on = bitmap[index] & (0x80 >> (row % 8));
+    for (uint8_t row = 0; row < width; row++) {
+        for (uint8_t col = 0; col < height; col++) {
+            uint8_t index = (row * bytes_per_row) + (col / 8);
+            uint8_t is_on = bitmap[index] & (0x80 >> (col % 8));
             if (is_on)
-                SH1106_Draw_Pixel(h, x + row, y + col, state);
+                SH1106_Draw_Pixel(h, x + col, y + row, state);
         }
     }
 }
